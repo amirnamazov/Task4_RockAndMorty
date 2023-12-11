@@ -11,13 +11,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
-    private val viewModel: HomeViewModel by viewModels()
+    override val viewModel: HomeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         viewModel.getCharacters()
         viewModel.resCharacters.observe(viewLifecycleOwner) {
-            println("3453453433453     ${it}")
+            if (it is HomeUIState.Success) {
+                println("3453453433453     ${it.data.results?.get(0)}")
+            }
         }
     }
 
