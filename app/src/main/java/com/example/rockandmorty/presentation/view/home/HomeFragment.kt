@@ -1,12 +1,19 @@
 package com.example.rockandmorty.presentation.view.home
 
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
+import com.example.rockandmorty.R
 import com.example.rockandmorty.databinding.FragmentHomeBinding
+import com.example.rockandmorty.databinding.ItemSpinnerCharBinding
 import com.example.rockandmorty.presentation.base.BaseFragment
+import com.example.rockandmorty.presentation.utils.CustomAdapter
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
@@ -14,13 +21,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     override val viewModel: HomeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupRvFilterAdapter()
 
-        viewModel.getCharacters()
-        viewModel.resCharacters.observe(viewLifecycleOwner) {
-            if (it is HomeUIState.Success) {
-                println("3453453433453     ${it.data.results?.get(0)}")
-            }
-        }
+//        viewModel.getCharacters()
+//        viewModel.resCharacters.observe(viewLifecycleOwner) {
+//            if (it is HomeUIState.Success) {
+//                println("3453453433453     ${it.data.results?.get(0)}")
+//            }
+//        }
     }
 
 //    private fun LiveData<HomeUIState>
@@ -61,6 +69,39 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 //            }
 //        )
 //    }
+
+    private fun setupRvFilterAdapter() {
+        val selectedItemPos = Array(33) { 0 }
+        binding.rvFilter.adapter = CustomAdapter(ItemSpinnerCharBinding::inflate, 33) { b, i ->
+            val arrayAdapter = ArrayAdapter(
+                requireContext(),
+                R.layout.spinner_char,
+                listOf("76876", "78686887", "80808098098098")
+            )
+
+            arrayAdapter.setDropDownViewResource(R.layout.spinner_char_dropdown)
+
+            b.spinnerCharacter.apply {
+                adapter = arrayAdapter
+
+                setSelection(selectedItemPos[i])
+
+                setOnTouchListener { v, event ->
+                    if (event.action == MotionEvent.ACTION_UP) v.performClick()
+                    return@setOnTouchListener true
+                }
+
+                onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(p: AdapterView<*>?, v: View?,
+                                                position: Int, id: Long) {
+                        selectedItemPos[i] = position
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                }
+            }
+        }
+    }
 
     private fun ShimmerFrameLayout.stop() {
         stopShimmer()
