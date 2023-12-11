@@ -23,12 +23,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRvFilterAdapter()
 
-//        viewModel.getCharacters()
-//        viewModel.resCharacters.observe(viewLifecycleOwner) {
-//            if (it is HomeUIState.Success) {
-//                println("3453453433453     ${it.data.results?.get(0)}")
-//            }
-//        }
+        viewModel.getCharacters(1)
+        viewModel.resCharacters.observe(viewLifecycleOwner) {
+            if (it is HomeUIState.Success) {
+                println("3453453433453     ${it.data.results?.get(0)}")
+            }
+        }
     }
 
 //    private fun LiveData<HomeUIState>
@@ -71,36 +71,54 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 //    }
 
     private fun setupRvFilterAdapter() {
-        val selectedItemPos = Array(33) { 0 }
-        binding.rvFilter.adapter = CustomAdapter(ItemSpinnerCharBinding::inflate, 33) { b, i ->
-            val arrayAdapter = ArrayAdapter(
-                requireContext(),
-                R.layout.spinner_char,
-                listOf("76876", "78686887", "80808098098098")
-            )
+        val list = charParams()
 
-            arrayAdapter.setDropDownViewResource(R.layout.spinner_char_dropdown)
+        binding.rvFilter.adapter =
+            CustomAdapter(ItemSpinnerCharBinding::inflate, list.size) { b, i ->
+                val arrayAdapter = ArrayAdapter(
+                    requireContext(),
+                    R.layout.spinner_char,
+                    list[i].spinnerList
+                )
 
-            b.spinnerCharacter.apply {
-                adapter = arrayAdapter
+                arrayAdapter.setDropDownViewResource(R.layout.spinner_char_dropdown)
 
-                setSelection(selectedItemPos[i])
+                b.spinnerCharacter.apply {
+                    adapter = arrayAdapter
 
-                setOnTouchListener { v, event ->
-                    if (event.action == MotionEvent.ACTION_UP) v.performClick()
-                    return@setOnTouchListener true
-                }
+                    setSelection(list[i].selectedPos)
 
-                onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(p: AdapterView<*>?, v: View?,
-                                                position: Int, id: Long) {
-                        selectedItemPos[i] = position
+                    setOnTouchListener { v, event ->
+                        if (event.action == MotionEvent.ACTION_UP) v.performClick()
+                        return@setOnTouchListener true
                     }
 
-                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            p: AdapterView<*>?, v: View?,
+                            position: Int, id: Long
+                        ) {
+                            if (list[i].selectedPos != position) {
+                                list[i].selectedPos = position
+                                viewModel.getCharacters(
+                                    1,
+                                    gender = list[0].params[list[0].selectedPos],
+                                    status = list[1].params[list[1].selectedPos],
+                                )
+                            }
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    }
                 }
             }
-        }
+    }
+
+    private fun charParams(): List<CharacterParams> = resources.run {
+        listOf(
+            CharacterParams(getStringArray(R.array.gender).toList()),
+            CharacterParams(getStringArray(R.array.status).toList()),
+        )
     }
 
     private fun ShimmerFrameLayout.stop() {

@@ -10,8 +10,7 @@ import javax.inject.Inject
 
 class CharacterUseCase @Inject constructor(private val repository: CharacterRepository) {
 
-    fun getCharacters(page: Int): Flow<ResourceState<Character>> =
-        getRemoteData(
-            request = { repository.getCharacters(page) },
+    fun getCharacters(page: Int, gender: String, status: String): Flow<ResourceState<Character>> =
+        getRemoteData(request = { repository.getCharacters(page, gender, status) },
             mapper = { CharacterMapper.map(it) })
 }

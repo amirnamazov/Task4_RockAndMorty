@@ -20,7 +20,8 @@ class HomeViewModel @Inject constructor(private val useCase: CharacterUseCase) :
     private val _resCharacters = MutableLiveData<HomeUIState>()
     val resCharacters: LiveData<HomeUIState> get() = _resCharacters
 
-    fun getCharacters() = useCase.getCharacters(1).fetchData(_resCharacters)
+    fun getCharacters(page: Int, gender: String = "", status: String = "") =
+        useCase.getCharacters(page, gender, status).fetchData(_resCharacters)
 
     private fun Flow<ResourceState<Character>>.fetchData(livedata: MutableLiveData<HomeUIState>) =
         viewModelScope.launch(Dispatchers.IO) {

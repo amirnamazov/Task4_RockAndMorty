@@ -4,5 +4,5 @@ import com.example.rockandmorty.data.data_source.remote.dto.character.CharacterD
 import retrofit2.Response
 
 interface CharacterRepository {
-    suspend fun getCharacters(page: Int): Response<CharacterDTO>
+    suspend fun getCharacters(page: Int, gender: String, status: String): Response<CharacterDTO>
 }
