@@ -12,6 +12,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val repository: CharacterRepository) : ViewModel() {
 
-    val results get() = repository.getCharacters().stateIn(
-        viewModelScope, SharingStarted.WhileSubscribed(), PagingData.empty())
+    fun getResults(gender: String, status: String) =
+        repository.getCharacters(gender, status).stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(), PagingData.empty()
+        )
 }
