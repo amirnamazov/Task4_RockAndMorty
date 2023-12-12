@@ -1,6 +1,7 @@
 package com.example.rockandmorty.domain.model.character
 
 data class Result(
+    val id: Int?,
     val name: String?,
     val created: String?,
     val gender: String?,

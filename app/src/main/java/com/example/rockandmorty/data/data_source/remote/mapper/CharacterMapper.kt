@@ -14,6 +14,7 @@ object CharacterMapper {
 
     private fun List<ResultDTO>.map() = map {
         Result(
+            id = it.id,
             name = it.name,
             created = it.created,
             gender = it.gender,

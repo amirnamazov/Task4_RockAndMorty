@@ -8,29 +8,19 @@ import androidx.lifecycle.lifecycleScope
 import com.example.rockandmorty.R
 import com.example.rockandmorty.databinding.FragmentHomeBinding
 import com.example.rockandmorty.presentation.base.BaseFragment
-import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     override val viewModel: HomeViewModel by viewModels()
 
-    private val characterAdapter by lazy { CharacterAdapter() }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        setupRvFilterAdapter()
 
-        binding.rvCharacters.adapter = characterAdapter
-
-        lifecycleScope.launch {
-            viewModel.results.flowWithLifecycle(lifecycle).collectLatest {
-                characterAdapter.submitData(it)
-            }
-        }
+        setupCharacterAdapter()
 
 //        viewModel.getCharacters(1)
 //        viewModel.resCharacters.observe(viewLifecycleOwner) {
@@ -38,6 +28,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 //                println("3453453433453     ${it.data.results?.get(0)}")
 //            }
 //        }
+    }
+
+    private fun setupCharacterAdapter() {
+        val characterAdapter = CharacterAdapter()
+        binding.rvCharacters.adapter = characterAdapter
+
+        lifecycleScope.launch {
+            viewModel.results.flowWithLifecycle(lifecycle).collectLatest {
+                characterAdapter.submitData(it)
+            }
+        }
     }
 
 //    private fun LiveData<HomeUIState>
@@ -128,15 +129,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             CharacterParams(getStringArray(R.array.gender).toList()),
             CharacterParams(getStringArray(R.array.status).toList()),
         )
-    }
-
-    private fun ShimmerFrameLayout.stop() {
-        stopShimmer()
-        hideShimmer()
-    }
-
-    private fun ShimmerFrameLayout.start() {
-        startShimmer()
-        showShimmer(true)
     }
 }

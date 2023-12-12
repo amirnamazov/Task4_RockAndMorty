@@ -4,14 +4,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.rockandmorty.data.data_source.remote.api.CharacterApi
-import com.example.rockandmorty.data.data_source.remote.dto.character.ResultDTO
 import com.example.rockandmorty.data.data_source.remote.paging_source.CharacterPagingResource
+import com.example.rockandmorty.domain.model.character.Result
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class CharRepository @Inject constructor(private val api: CharacterApi) {
+class CharacterRepository @Inject constructor(private val api: CharacterApi) {
 
-    fun getCharacters(): Flow<PagingData<ResultDTO>> = Pager(
+    fun getCharacters(): Flow<PagingData<Result>> = Pager(
         config = PagingConfig(
             pageSize = 12,
             maxSize = 90,

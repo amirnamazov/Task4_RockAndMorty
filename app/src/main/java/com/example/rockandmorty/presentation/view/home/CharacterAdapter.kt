@@ -1,16 +1,15 @@
 package com.example.rockandmorty.presentation.view.home
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.rockandmorty.data.data_source.remote.dto.character.ResultDTO
 import com.example.rockandmorty.databinding.ItemCharacterBinding
+import com.example.rockandmorty.domain.model.character.Result
 
-class CharacterAdapter : PagingDataAdapter<ResultDTO, RecyclerView.ViewHolder>(COMPARATOR) {
+class CharacterAdapter : PagingDataAdapter<Result, RecyclerView.ViewHolder>(COMPARATOR) {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val resultItem = getItem(position)
@@ -23,9 +22,10 @@ class CharacterAdapter : PagingDataAdapter<ResultDTO, RecyclerView.ViewHolder>(C
     class CharacterViewHolder(private val binding: ItemCharacterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        @SuppressLint("ResourceType")
-        fun bind(resultDTO: ResultDTO) {
-            binding.image.load(resultDTO.image)
+        fun bind(resultDTO: Result) = with(binding) {
+            image.load(resultDTO.image)
+            name.text = resultDTO.name
+            species.text = resultDTO.species
         }
 
         companion object {
@@ -38,11 +38,11 @@ class CharacterAdapter : PagingDataAdapter<ResultDTO, RecyclerView.ViewHolder>(C
     }
 
     companion object {
-        private val COMPARATOR = object : DiffUtil.ItemCallback<ResultDTO>() {
-            override fun areItemsTheSame(oldItem: ResultDTO, newItem: ResultDTO): Boolean =
+        private val COMPARATOR = object : DiffUtil.ItemCallback<Result>() {
+            override fun areItemsTheSame(oldItem: Result, newItem: Result): Boolean =
                 oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: ResultDTO, newItem: ResultDTO): Boolean =
+            override fun areContentsTheSame(oldItem: Result, newItem: Result): Boolean =
                 oldItem == newItem
 
         }

@@ -63,7 +63,6 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.49")
 
     implementation("io.coil-kt:coil:2.5.0")
-    implementation("com.facebook.shimmer:shimmer:0.5.0")
 
     implementation("androidx.paging:paging-runtime-ktx:3.2.1")
 }
