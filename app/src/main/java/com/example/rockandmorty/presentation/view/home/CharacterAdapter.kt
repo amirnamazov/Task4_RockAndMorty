@@ -1,5 +1,6 @@
 package com.example.rockandmorty.presentation.view.home
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -22,12 +23,9 @@ class CharacterAdapter : PagingDataAdapter<ResultDTO, RecyclerView.ViewHolder>(C
     class CharacterViewHolder(private val binding: ItemCharacterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-
+        @SuppressLint("ResourceType")
         fun bind(resultDTO: ResultDTO) {
             binding.image.load(resultDTO.image)
-//            binding.image.load(R.drawable.ic_arrow_down)
-            println(resultDTO.image)
-//            binding.url = resultDTO.image
         }
 
         companion object {

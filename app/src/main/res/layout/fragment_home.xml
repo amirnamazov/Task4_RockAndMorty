@@ -50,16 +50,9 @@
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:orientation="vertical"
+        tools:itemCount="10"
+        tools:listitem="@layout/item_character"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
-        tools:itemCount="19"
-        tools:listitem="@layout/item_character" />
-
-    <!--        <com.facebook.shimmer.ShimmerFrameLayout-->
-    <!--            android:id="@+id/sl_news"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content">-->
-
-    <!--        </com.facebook.shimmer.ShimmerFrameLayout>-->
+        app:spanCount="2" />
 
 </LinearLayout>
