@@ -1,18 +1,17 @@
 package com.example.rockandmorty.presentation.view.home
 
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.example.rockandmorty.R
 import com.example.rockandmorty.databinding.FragmentHomeBinding
-import com.example.rockandmorty.databinding.ItemSpinnerCharBinding
 import com.example.rockandmorty.presentation.base.BaseFragment
-import com.example.rockandmorty.presentation.utils.CustomAdapter
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -20,15 +19,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override val viewModel: HomeViewModel by viewModels()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupRvFilterAdapter()
+    private val characterAdapter by lazy { CharacterAdapter() }
 
-        viewModel.getCharacters(1)
-        viewModel.resCharacters.observe(viewLifecycleOwner) {
-            if (it is HomeUIState.Success) {
-                println("3453453433453     ${it.data.results?.get(0)}")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        setupRvFilterAdapter()
+
+        binding.rvCharacters.adapter = characterAdapter
+
+        lifecycleScope.launch {
+            viewModel.results.flowWithLifecycle(lifecycle).collectLatest {
+                characterAdapter.submitData(it)
             }
         }
+
+//        viewModel.getCharacters(1)
+//        viewModel.resCharacters.observe(viewLifecycleOwner) {
+//            if (it is HomeUIState.Success) {
+//                println("3453453433453     ${it.data.results?.get(0)}")
+//            }
+//        }
     }
 
 //    private fun LiveData<HomeUIState>
@@ -70,49 +79,49 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 //        )
 //    }
 
-    private fun setupRvFilterAdapter() {
-        val list = charParams()
-
-        binding.rvFilter.adapter =
-            CustomAdapter(ItemSpinnerCharBinding::inflate, list.size) { b, i ->
-                val arrayAdapter = ArrayAdapter(
-                    requireContext(),
-                    R.layout.spinner_char,
-                    list[i].spinnerList
-                )
-
-                arrayAdapter.setDropDownViewResource(R.layout.spinner_char_dropdown)
-
-                b.spinnerCharacter.apply {
-                    adapter = arrayAdapter
-
-                    setSelection(list[i].selectedPos)
-
-                    setOnTouchListener { v, event ->
-                        if (event.action == MotionEvent.ACTION_UP) v.performClick()
-                        return@setOnTouchListener true
-                    }
-
-                    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(
-                            p: AdapterView<*>?, v: View?,
-                            position: Int, id: Long
-                        ) {
-                            if (list[i].selectedPos != position) {
-                                list[i].selectedPos = position
-                                viewModel.getCharacters(
-                                    1,
-                                    gender = list[0].params[list[0].selectedPos],
-                                    status = list[1].params[list[1].selectedPos],
-                                )
-                            }
-                        }
-
-                        override fun onNothingSelected(parent: AdapterView<*>?) {}
-                    }
-                }
-            }
-    }
+//    private fun setupRvFilterAdapter() {
+//        val list = charParams()
+//
+//        binding.rvFilter.adapter =
+//            CustomAdapter(ItemSpinnerCharBinding::inflate, list.size) { b, i ->
+//                val arrayAdapter = ArrayAdapter(
+//                    requireContext(),
+//                    R.layout.spinner_char,
+//                    list[i].spinnerList
+//                )
+//
+//                arrayAdapter.setDropDownViewResource(R.layout.spinner_char_dropdown)
+//
+//                b.spinnerCharacter.apply {
+//                    adapter = arrayAdapter
+//
+//                    setSelection(list[i].selectedPos)
+//
+//                    setOnTouchListener { v, event ->
+//                        if (event.action == MotionEvent.ACTION_UP) v.performClick()
+//                        return@setOnTouchListener true
+//                    }
+//
+//                    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//                        override fun onItemSelected(
+//                            p: AdapterView<*>?, v: View?,
+//                            position: Int, id: Long
+//                        ) {
+//                            if (list[i].selectedPos != position) {
+//                                list[i].selectedPos = position
+//                                viewModel.getCharacters(
+//                                    1,
+//                                    gender = list[0].params[list[0].selectedPos],
+//                                    status = list[1].params[list[1].selectedPos],
+//                                )
+//                            }
+//                        }
+//
+//                        override fun onNothingSelected(parent: AdapterView<*>?) {}
+//                    }
+//                }
+//            }
+//    }
 
     private fun charParams(): List<CharacterParams> = resources.run {
         listOf(

@@ -6,10 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.HttpUrl
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -18,24 +15,24 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
 
+//    @Provides
+//    @Singleton
+//    fun providesInterceptor(): Interceptor = Interceptor { chain ->
+//        val url: HttpUrl = chain.request().url().newBuilder()
+//            .build()
+//
+//        val request: Request = chain.request().newBuilder()
+//            .url(url)
+//            .build()
+//
+//        chain.proceed(request)
+//    }
+
     @Provides
     @Singleton
-    fun providesInterceptor(): Interceptor = Interceptor { chain ->
-        val url: HttpUrl = chain.request().url().newBuilder()
-            .build()
-
-        val request: Request = chain.request().newBuilder()
-            .url(url)
-            .build()
-
-        chain.proceed(request)
-    }
-
-    @Provides
-    @Singleton
-    fun providesOkHttpClient(interceptor: Interceptor): OkHttpClient =
+    fun providesOkHttpClient(): OkHttpClient =
         OkHttpClient.Builder()
-            .addInterceptor(interceptor)
+//            .addInterceptor(interceptor)
             .build()
 
     @Provides
