@@ -9,7 +9,6 @@ import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.example.rockandmorty.R
 import com.example.rockandmorty.databinding.FragmentHomeBinding
@@ -93,10 +92,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
 
-    override fun onItemClick(imageView: View, result: Result) {
-        val action = HomeFragmentDirections.fromHomeFragToDetailsFrag("mane")
-        val extras = FragmentNavigatorExtras(imageView to "image_char")
-
-        findNavController().navigate(action, extras)
+    override fun onItemClick(result: Result) {
+        val action = HomeFragmentDirections.fromHomeFragToDetailsFrag(result)
+        findNavController().navigate(action)
     }
 }

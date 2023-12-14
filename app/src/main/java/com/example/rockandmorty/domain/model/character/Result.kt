@@ -1,5 +1,7 @@
 package com.example.rockandmorty.domain.model.character
 
+import java.io.Serializable
+
 data class Result(
     val id: Int?,
     val name: String?,
@@ -11,4 +13,4 @@ data class Result(
     val species: String?,
     val status: String?,
     val type: String?,
-)
+) : Serializable

@@ -21,8 +21,8 @@
         android:label="Details"
         tools:layout="@layout/fragment_details">
         <argument
-            android:name="name"
-            app:argType="string" />
+            android:name="result"
+            app:argType="com.example.rockandmorty.domain.model.character.Result" />
     </fragment>
 
 </navigation>
