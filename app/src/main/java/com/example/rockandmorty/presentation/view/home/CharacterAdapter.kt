@@ -1,6 +1,7 @@
 package com.example.rockandmorty.presentation.view.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -37,7 +38,7 @@ class CharacterAdapter(private val itemClick: ItemClick) :
                 else -> icon.load(R.drawable.ic_unknown)
             }
             image.setOnClickListener {
-                itemClick.onItemClick()
+                itemClick.onItemClick(it, result)
             }
         }
 
@@ -51,7 +52,7 @@ class CharacterAdapter(private val itemClick: ItemClick) :
     }
 
     fun interface ItemClick {
-        fun onItemClick()
+        fun onItemClick(imageView: View, result: Result)
     }
 
     companion object {
