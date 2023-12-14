@@ -6,6 +6,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.example.rockandmorty.R
 import com.example.rockandmorty.databinding.ItemCharacterBinding
 import com.example.rockandmorty.domain.model.character.Result
 
@@ -22,10 +23,15 @@ class CharacterAdapter : PagingDataAdapter<Result, RecyclerView.ViewHolder>(COMP
     class CharacterViewHolder(private val binding: ItemCharacterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(resultDTO: Result) = with(binding) {
-            image.load(resultDTO.image)
-            name.text = resultDTO.name
-            species.text = resultDTO.species
+        fun bind(result: Result) = with(binding) {
+            image.load(result.image)
+            name.text = result.name
+            species.text = result.species
+            when (result.status) {
+                "Alive" -> icon.load(R.drawable.ic_alive)
+                "Dead" -> icon.load(R.drawable.ic_dead)
+                else -> icon.load(R.drawable.ic_unknown)
+            }
         }
 
         companion object {
