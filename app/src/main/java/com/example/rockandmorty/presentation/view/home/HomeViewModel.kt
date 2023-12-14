@@ -23,16 +23,20 @@ import kotlin.properties.Delegates
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val repository: CharacterRepository) : ViewModel() {
 
-    fun getResults(gender: String, status: String) =
-        repository.getCharacters(searchText, gender, status).stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(), PagingData.empty()
-        )
-
     lateinit var characterParams: List<CharacterParams>
 
+    private fun getMap() = mapOf(
+        "name" to searchText,
+        "gender" to characterParams[0].run { params[selectedPos] },
+        "status" to characterParams[1].run { params[selectedPos] },
+    )
+
+    fun getResults() = repository.getCharacters(getMap()).stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(), PagingData.empty()
+    )
+
     private val sharedFlowSearch = MutableSharedFlow<String>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
     var searchText by Delegates.observable("") { _, oldValue, newValue ->

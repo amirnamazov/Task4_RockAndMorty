@@ -4,13 +4,12 @@ import com.example.rockandmorty.data.data_source.remote.dto.character.CharacterD
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface CharacterApi {
     @GET("character")
     suspend fun getCharacters(
         @Query("page") page: Int,
-        @Query("name") name: String,
-        @Query("gender") gender: String,
-        @Query("status") status: String
+        @QueryMap map: Map<String, String>,
     ): Response<CharacterDTO>
 }

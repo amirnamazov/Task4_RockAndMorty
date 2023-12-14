@@ -50,10 +50,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun setupCharacterAdapter() = lifecycleScope.launch {
-        viewModel.getResults(
-            gender = viewModel.characterParams[0].run { params[selectedPos] },
-            status = viewModel.characterParams[1].run { params[selectedPos] },
-        ).flowWithLifecycle(lifecycle).collectLatest {
+        viewModel.getResults().flowWithLifecycle(lifecycle).collectLatest {
             characterAdapter.submitData(it)
         }
     }
@@ -82,9 +79,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    p: AdapterView<*>?, v: View?, position: Int, id: Long
-                ) {
+                override fun onItemSelected(p: AdapterView<*>?, v: View?, position: Int, id: Long) {
                     if (get(i).selectedPos != position) {
                         get(i).selectedPos = position
                         setupCharacterAdapter()
