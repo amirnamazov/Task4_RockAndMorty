@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -17,8 +16,6 @@ abstract class BaseFragment<T : ViewBinding>(
     private var _activity: BaseActivity<*>? = null
 
     protected val binding: T get() = _binding!!
-
-    protected abstract val viewModel: ViewModel?
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, saved: Bundle?

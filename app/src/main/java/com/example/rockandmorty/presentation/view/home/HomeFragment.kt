@@ -8,8 +8,8 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.rockandmorty.R
 import com.example.rockandmorty.databinding.FragmentHomeBinding
 import com.example.rockandmorty.databinding.ItemSpinnerCharBinding
@@ -20,10 +20,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
+class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
+    CharacterAdapter.ItemClick {
 
-    override val viewModel: HomeViewModel by viewModels()
-    private val characterAdapter: CharacterAdapter by lazy { CharacterAdapter() }
+    private val viewModel: HomeViewModel by viewModels()
+    private val characterAdapter: CharacterAdapter by lazy { CharacterAdapter(this) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvCharacters.adapter = characterAdapter
@@ -50,7 +51,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun setupCharacterAdapter() = lifecycleScope.launch {
-        viewModel.getResults().flowWithLifecycle(lifecycle).collectLatest {
+        viewModel.getResults().collectLatest {
             characterAdapter.submitData(it)
         }
     }
@@ -89,4 +90,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         }
+
+    override fun onItemClick() {
+        findNavController().navigate(R.id.fromHomeFragToDetailsFrag)
+    }
 }

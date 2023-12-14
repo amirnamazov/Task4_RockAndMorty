@@ -9,6 +9,16 @@
         android:id="@+id/frag_home"
         android:name="com.example.rockandmorty.presentation.view.home.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home"/>
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/fromHomeFragToDetailsFrag"
+            app:destination="@id/frag_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/frag_details"
+        android:name="com.example.rockandmorty.presentation.view.details.DetailsFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_details" />
 
 </navigation>

@@ -10,7 +10,8 @@ import com.example.rockandmorty.R
 import com.example.rockandmorty.databinding.ItemCharacterBinding
 import com.example.rockandmorty.domain.model.character.Result
 
-class CharacterAdapter : PagingDataAdapter<Result, RecyclerView.ViewHolder>(COMPARATOR) {
+class CharacterAdapter(private val itemClick: ItemClick) :
+    PagingDataAdapter<Result, RecyclerView.ViewHolder>(COMPARATOR) {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val resultItem = getItem(position)
@@ -18,9 +19,12 @@ class CharacterAdapter : PagingDataAdapter<Result, RecyclerView.ViewHolder>(COMP
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-        CharacterViewHolder.create(parent)
+        CharacterViewHolder.create(parent, itemClick)
 
-    class CharacterViewHolder(private val binding: ItemCharacterBinding) :
+    private class CharacterViewHolder(
+        private val binding: ItemCharacterBinding,
+        private val itemClick: ItemClick
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(result: Result) = with(binding) {
@@ -32,15 +36,22 @@ class CharacterAdapter : PagingDataAdapter<Result, RecyclerView.ViewHolder>(COMP
                 "Dead" -> icon.load(R.drawable.ic_dead)
                 else -> icon.load(R.drawable.ic_unknown)
             }
+            image.setOnClickListener {
+                itemClick.onItemClick()
+            }
         }
 
         companion object {
-            fun create(parent: ViewGroup): RecyclerView.ViewHolder {
+            fun create(parent: ViewGroup, itemClick: ItemClick): RecyclerView.ViewHolder {
                 val inflater = LayoutInflater.from(parent.context)
                 val binding = ItemCharacterBinding.inflate(inflater, parent, false)
-                return CharacterViewHolder(binding)
+                return CharacterViewHolder(binding, itemClick)
             }
         }
+    }
+
+    fun interface ItemClick {
+        fun onItemClick()
     }
 
     companion object {
