@@ -11,11 +11,11 @@ import javax.inject.Inject
 
 class CharacterRepository @Inject constructor(private val api: CharacterApi) {
 
-    fun getCharacters(gender: String, status: String): Flow<PagingData<Result>> = Pager(
+    fun getCharacters(name: String, gender: String, status: String): Flow<PagingData<Result>> = Pager(
         config = PagingConfig(
             pageSize = 12,
             maxSize = 90,
         ),
-        pagingSourceFactory = { CharacterPagingResource(api, gender, status) }
+        pagingSourceFactory = { CharacterPagingResource(api, name, gender, status) }
     ).flow
 }

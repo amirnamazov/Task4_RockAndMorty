@@ -5,6 +5,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.widget.AppCompatSpinner
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,68 +23,75 @@ import kotlinx.coroutines.launch
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     override val viewModel: HomeViewModel by viewModels()
-    private val characterAdapter by lazy { CharacterAdapter() }
+    private val characterAdapter: CharacterAdapter by lazy { CharacterAdapter() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvCharacters.adapter = characterAdapter
+
+        initCharacterParams()
         setupCharacterAdapter()
         setupRvFilterAdapter()
+        setupSearchText()
     }
 
-    private fun setupCharacterAdapter(gender: String = "", status: String = "") =
-        lifecycleScope.launch {
-            viewModel.getResults(gender, status).flowWithLifecycle(lifecycle).collectLatest {
-                characterAdapter.submitData(it)
-            }
+    private fun setupSearchText() {
+        binding.etSearch.doAfterTextChanged { viewModel.searchText = it.toString() }
+
+        viewModel.liveDataSearch.observe(viewLifecycleOwner) { setupCharacterAdapter() }
+    }
+
+    private fun initCharacterParams() {
+        viewModel.characterParams = resources.run {
+            listOf(
+                CharacterParams(getStringArray(R.array.gender).toList()),
+                CharacterParams(getStringArray(R.array.status).toList()),
+            )
         }
+    }
 
-    private fun setupRvFilterAdapter() {
-        val list = charParams()
+    private fun setupCharacterAdapter() = lifecycleScope.launch {
+        viewModel.getResults(
+            gender = viewModel.characterParams[0].run { params[selectedPos] },
+            status = viewModel.characterParams[1].run { params[selectedPos] },
+        ).flowWithLifecycle(lifecycle).collectLatest {
+            characterAdapter.submitData(it)
+        }
+    }
 
-        binding.rvFilter.adapter =
-            CustomAdapter(ItemSpinnerCharBinding::inflate, list.size) { b, i ->
-                val arrayAdapter = ArrayAdapter(
-                    requireContext(),
-                    R.layout.spinner_char,
-                    list[i].spinnerList
-                )
+    private fun setupRvFilterAdapter() = with(viewModel.characterParams) {
+        binding.rvFilter.adapter = CustomAdapter(ItemSpinnerCharBinding::inflate, size) { b, i ->
+            val arrayAdapter = ArrayAdapter(
+                requireContext(), R.layout.spinner_char, get(i).spinnerList
+            )
 
-                arrayAdapter.setDropDownViewResource(R.layout.spinner_char_dropdown)
+            arrayAdapter.setDropDownViewResource(R.layout.spinner_char_dropdown)
 
-                b.spinnerCharacter.apply {
-                    adapter = arrayAdapter
+            b.spinnerCharacter.setupSpinner(arrayAdapter, i)
+        }
+    }
 
-                    setSelection(list[i].selectedPos)
+    private fun AppCompatSpinner.setupSpinner(arrayAdapter: ArrayAdapter<String>, i: Int) =
+        with(viewModel.characterParams) {
+            adapter = arrayAdapter
 
-                    setOnTouchListener { v, event ->
-                        if (event.action == MotionEvent.ACTION_UP) v.performClick()
-                        return@setOnTouchListener true
-                    }
+            setSelection(get(i).selectedPos)
 
-                    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(
-                            p: AdapterView<*>?, v: View?,
-                            position: Int, id: Long
-                        ) {
-                            if (list[i].selectedPos != position) {
-                                list[i].selectedPos = position
-                                setupCharacterAdapter(
-                                    gender = list[0].params[list[0].selectedPos],
-                                    status = list[1].params[list[1].selectedPos],
-                                )
-                            }
-                        }
+            setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_UP) v.performClick()
+                return@setOnTouchListener true
+            }
 
-                        override fun onNothingSelected(parent: AdapterView<*>?) {}
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    p: AdapterView<*>?, v: View?, position: Int, id: Long
+                ) {
+                    if (get(i).selectedPos != position) {
+                        get(i).selectedPos = position
+                        setupCharacterAdapter()
                     }
                 }
-            }
-    }
 
-    private fun charParams(): List<CharacterParams> = resources.run {
-        listOf(
-            CharacterParams(getStringArray(R.array.gender).toList()),
-            CharacterParams(getStringArray(R.array.status).toList()),
-        )
-    }
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+        }
 }

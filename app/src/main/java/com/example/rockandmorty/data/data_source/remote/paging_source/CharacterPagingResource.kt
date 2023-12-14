@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 class CharacterPagingResource @Inject constructor(
     private val api: CharacterApi,
+    private val name: String,
     private val gender: String,
     private val status: String
 ) : PagingSource<Int, Result>() {
@@ -23,7 +24,7 @@ class CharacterPagingResource @Inject constructor(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Result> {
         val page = params.key ?: 1
         return try {
-            val response = api.getCharacters(page, gender, status)
+            val response = api.getCharacters(page, name, gender, status)
             val character: CharacterDTO? = response.body()
             if (!response.isSuccessful || character == null) throw Exception()
             val results: List<Result>? = CharacterMapper.map(character).results
